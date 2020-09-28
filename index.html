@@ -94,6 +94,7 @@
             Papa.parse(csvUrl, {
                 download: true,
                 header: true,
+                skipEmptyLines: true,
                 complete: function (results) {
                     map.once('idle', () => {
                         console.log(results.data);
@@ -207,7 +208,6 @@
             popup.setLngLat(e.lngLat).setHTML(content).addTo(map);
 
         });
-
 
         map.on('mouseleave', 'county-fill', function () {
             map.getCanvas().style.cursor = '';
