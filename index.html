@@ -269,26 +269,18 @@
           }
 
           const filtered = filterData(yestd_str);
-          const popMap = {};
-          popData.forEach(function (pop) {
-            popMap[pop.fips] = pop;
+          const dataMap = {};
+          filtered.forEach(function (pop) {
+            dataMap[pop.fips] = pop;
           });
 
-          console.log('pop', popData[0]);
-          //   var newData = Object.assign([], popData, filtered);
-          const joined = filtered.slice(0, 100).map(function (item, index) {
-            // console.log(item, index);
-            const popItem = popMap[item.fips];
-            console.log(item, popItem);
-            return {
-              population: popItem['Population'],
-              deaths2018: popItem['deaths2018'],
-              ...item,
-            };
+          const joined = popData.map(function (item, index) {
+            const dataItem = dataMap[item.fips];
+            const join = { ...dataItem, ...item };
+            processPopRow(join);
+            return join;
           });
-          console.log(joined);
-          //   console.log('newData', newData[0]);
-          //   processPopData(newData);
+          // processPopData(joined);
         });
       });
 
