@@ -267,12 +267,28 @@
               return row.date == yestd;
             });
           }
+
           const filtered = filterData(yestd_str);
-          console.log('filtered', filtered[0]);
+          const popMap = {};
+          popData.forEach(function (pop) {
+            popMap[pop.fips] = pop;
+          });
+
           console.log('pop', popData[0]);
-          var newData = Object.assign([], filterData(yestd_str), popData);
-          console.log('newData', newData);
-          processPopData(newData);
+          //   var newData = Object.assign([], popData, filtered);
+          const joined = filtered.slice(0, 100).map(function (item, index) {
+            // console.log(item, index);
+            const popItem = popMap[item.fips];
+            console.log(item, popItem);
+            return {
+              population: popItem['Population'],
+              deaths2018: popItem['deaths2018'],
+              ...item,
+            };
+          });
+          console.log(joined);
+          //   console.log('newData', newData[0]);
+          //   processPopData(newData);
         });
       });
 
@@ -287,7 +303,6 @@
         var county = map.queryRenderedFeatures(e.point, {
           layers: ['county-fill'],
         });
-        console.log(county);
 
         var props = county[0].properties;
 
