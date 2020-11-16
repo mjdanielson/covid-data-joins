@@ -1,265 +1,320 @@
 <!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <title>Data Joins - COVID Data</title>
-    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
-    <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js"></script>
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css"
+      rel="stylesheet"
+    />
     <script src="https://unpkg.com/papaparse@latest/papaparse.min.js"></script>
-    <link href="https://api.mapbox.com/mapbox-assembly/v0.24.0/assembly.min.css" rel="stylesheet">
-    <script async defer src="https://api.mapbox.com/mapbox-assembly/v0.24.0/assembly.js"></script>
+    <link
+      href="https://api.mapbox.com/mapbox-assembly/v0.24.0/assembly.min.css"
+      rel="stylesheet"
+    />
+    <script
+      async
+      defer
+      src="https://api.mapbox.com/mapbox-assembly/v0.24.0/assembly.js"
+    ></script>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-        }
+      body {
+        margin: 0;
+        padding: 0;
+      }
 
-        #map {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 100%;
-        }
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+      }
 
-        #attribution {
-            position: absolute;
-            bottom: 0;
-            right: 15px;
-            z-index: 1;
-            font-size: 12px;
-        }
+      #attribution {
+        position: absolute;
+        bottom: 0;
+        right: 15px;
+        z-index: 1;
+        font-size: 12px;
+      }
 
-        #attribution a {
-            color: #839CF9;
+      #attribution a {
+        color: #839cf9;
+      }
 
-        }
+      .mapboxgl-popup {
+        max-width: 400px;
+        font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+      }
 
-        .mapboxgl-popup {
-            max-width: 400px;
-            font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
-        }
+      .legend {
+        background-color: #fff;
+        border-radius: 3px;
+        top: 30px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        opacity: 0.8;
+        padding: 5px;
+        position: absolute;
+        right: 15px;
+        z-index: 1;
+      }
 
-        .legend {
-            background-color: #fff;
-            border-radius: 3px;
-            top: 30px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-            font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
-            opacity: .8;
-            padding: 5px;
-            position: absolute;
-            right: 15px;
-            z-index: 1;
-        }
-
-        .mapboxgl-popup {
-            max-width: 400px;
-            font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
-        }
+      .mapboxgl-popup {
+        max-width: 400px;
+        font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div id="map"></div>
-    <div id="attribution">©<a href="https://www.mapbox.com/about/maps/"> Mapbox</a> ©<a
-            href="https://www.mapbox.com/map-feedback/#/-74.5/40/10"> OpenStreetMap</a><a
-            href="https://www.mapbox.com/about/maps/" style="font-weight: bold;"> Improve this map</a> </div>
-    <div id='state-legend' class='w180 round shadow-darken10 px12 txt-s legend'>
-        <strong class='block mb6'> Number of Confirmed COVID Deaths</strong>
-        <div class="grid">
-            <div style="background-color: #FCE8DF" class='col--2 h18'></div>
-            <div class='col ml6'>1-146</div>
-        </div>
-        <div class="grid">
-            <div style="background-color: #FBBDA6" class='col--2 h18'></div>
-            <div class='col ml6'>146-640</div>
-        </div>
-        <div class="grid">
-            <div style="background-color: #FA8870" class='col--2 h18'></div>
-            <div class='col ml6'>620-1455</div>
-        </div>
-        <div class="grid">
-            <div style="background-color: #E35B56" class='col--2 h18'></div>
-            <div class='col ml6'>1455-3326</div>
-        </div>
-        <div class="grid">
-            <div style="background-color: #B6474B" class='col--2 h18'></div>
-            <div class='col ml6'>&gt; 3326</div>
-        </div>
-        <div class="grid">
-            <div style="background-color: #999999" class='col--2 h18'></div>
-            <div class='col ml6'>No or missing data</div>
-        </div>
-
+    <div id="attribution">
+      ©<a href="https://www.mapbox.com/about/maps/"> Mapbox</a> ©<a
+        href="https://www.mapbox.com/map-feedback/#/-74.5/40/10"
+      >
+        OpenStreetMap</a
+      ><a href="https://www.mapbox.com/about/maps/" style="font-weight: bold">
+        Improve this map</a
+      >
+    </div>
+    <div id="state-legend" class="w180 round shadow-darken10 px12 txt-s legend">
+      <strong class="block mb6"> Number of Confirmed COVID Deaths</strong>
+      <div class="grid">
+        <div style="background-color: #fce8df" class="col--2 h18"></div>
+        <div class="col ml6">1-146</div>
+      </div>
+      <div class="grid">
+        <div style="background-color: #fbbda6" class="col--2 h18"></div>
+        <div class="col ml6">146-640</div>
+      </div>
+      <div class="grid">
+        <div style="background-color: #fa8870" class="col--2 h18"></div>
+        <div class="col ml6">620-1455</div>
+      </div>
+      <div class="grid">
+        <div style="background-color: #e35b56" class="col--2 h18"></div>
+        <div class="col ml6">1455-3326</div>
+      </div>
+      <div class="grid">
+        <div style="background-color: #b6474b" class="col--2 h18"></div>
+        <div class="col ml6">&gt; 3326</div>
+      </div>
+      <div class="grid">
+        <div style="background-color: #999999" class="col--2 h18"></div>
+        <div class="col ml6">No or missing data</div>
+      </div>
     </div>
 
     <script>
+      const csvUrl =
+        'https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv';
+      const popUrl =
+        'https://raw.githubusercontent.com/seolhalee/covid-data-joins/master/age_adjusted_death_rate_18.csv';
 
-        mapboxgl.accessToken = 'pk.eyJ1IjoibWpkYW5pZWxzb24iLCJhIjoiY2s5bTJodXluMHVhYTNybWk1eTMxN2lidiJ9.DU-KkKoefUHAlSidTjqsiQ';
-        var map = new mapboxgl.Map({
-            container: 'map',
-            style: 'mapbox://styles/mjdanielson/ckfhh6hgi0fbp19mq9ravzm93',
-            zoom: 3.8,
-            center: [-3.632, 0.339],
+      const yestd = new Date(new Date().setDate(new Date().getDate() - 2));
+      const firstd = new Date('01/01/2020');
+      const days = (yestd.getTime() - firstd.getTime()) / (1000 * 3600 * 24);
+      const yestd_str = yestd.toISOString().slice(0, 10);
+
+      function papaPromise(url) {
+        return new Promise(function (resolve, reject) {
+          Papa.parse(url, {
+            delimiter: ',',
+            download: true,
+            header: true,
+            skipEmptyLines: true,
+            complete: resolve,
+            error: reject,
+          });
+        });
+      }
+      function processPopRow(row) {
+        row.excess_deaths =
+          row.deaths2018 === 0
+            ? 0
+            : Number.parseFloat(
+                (row.deaths / ((row.deaths2018 / 365) * days)) * 100
+              ).toPrecision(2);
+
+        map.setFeatureState(
+          {
+            source: 'albersusa',
+            sourceLayer: 'albersusa',
+            id: row.fips,
+          },
+          {
+            county: row['County'],
+            state_name: row.state,
+            confirmed_deaths: row.deaths,
+            excess_deaths: row.excess_deaths,
+            confirmed_cases: row.cases,
+          }
+        );
+      }
+      function processPopData(newData) {
+        newData.forEach((row) => {
+          processPopRow(row);
+        });
+      }
+
+      const loadPop = papaPromise(popUrl);
+      const loadCsv = papaPromise(csvUrl);
+
+      mapboxgl.accessToken =
+        'pk.eyJ1IjoibWpkYW5pZWxzb24iLCJhIjoiY2s5bTJodXluMHVhYTNybWk1eTMxN2lidiJ9.DU-KkKoefUHAlSidTjqsiQ';
+      var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mjdanielson/ckfhh6hgi0fbp19mq9ravzm93',
+        zoom: 3.8,
+        center: [-3.632, 0.339],
+      });
+
+      map.on('load', function () {
+        map.addSource('albersusa', {
+          type: 'vector',
+          url: 'mapbox://lobenichou.albersusa',
+          promoteId: 'county_fips',
         });
 
-        map.on('load', function () {
-            const csvUrl = 'https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv';
-            const popUrl = 'https://raw.githubusercontent.com/seolhalee/covid-data-joins/master/age_adjusted_death_rate_18.csv';
-            var popdata = Papa.parse(popUrl, {
-                delimiter:',',
-                downlaod: true,
-                header: true,
-                skipEmptyLines: true
+        map.addLayer({
+          id: 'county-fill',
+          type: 'fill',
+          source: 'albersusa',
+          'source-layer': 'albersusa',
+          layout: {},
+          paint: {
+            'fill-color': [
+              'case',
+              ['!=', ['feature-state', 'confirmed_deaths'], null],
+              [
+                'interpolate',
+                ['linear'],
+                ['to-number', ['feature-state', 'confirmed_deaths']],
+                0,
+                '#999999',
+                1,
+                '#FCE8DF',
+                146,
+                '#FCE8DF',
+                146.1,
+                '#FBBDA6',
+                620,
+                '#FBBDA6',
+                620.1,
+                '#FA8870',
+                1455,
+                '#FA8870',
+                1455.1,
+                '#E35B56',
+                3326,
+                '#E35B56',
+                3326.1,
+                '#B6474B',
+              ],
+              '#999999',
+            ],
+          },
+          filter: ['==', ['get', 'type'], 'county'],
+        });
+
+        map.addLayer({
+          id: 'albersusa-county-line',
+          type: 'line',
+          source: 'albersusa',
+          'source-layer': 'albersusa',
+          layout: {
+            'line-join': 'round',
+            'line-cap': 'round',
+          },
+          paint: {
+            'line-color': '#D8CAC1',
+            'line-width': 1,
+          },
+          filter: ['==', ['get', 'type'], 'county'],
+        });
+
+        map.addLayer({
+          id: 'albersusa-line',
+          type: 'line',
+          source: 'albersusa',
+          'source-layer': 'albersusa',
+          layout: {
+            'line-join': 'round',
+            'line-cap': 'round',
+          },
+          paint: {
+            'line-color': '#994433',
+            'line-width': 0.5,
+          },
+          filter: ['==', ['get', 'type'], 'state'],
+        });
+
+        Promise.all([loadPop, loadCsv]).then((data) => {
+          console.log('All data loaded', data);
+          const popData = data[0].data;
+          const results = data[1].data;
+
+          console.log('data complete', popData[0], results[0]);
+
+          function filterData(yestd) {
+            return results.filter((row) => {
+              return row.date == yestd;
             });
-            console.log(popdata);
-            Papa.parse(csvUrl, {
-                download: true,
-                header: true,
-                skipEmptyLines: true,
-                complete: function (results) {
-                    var yestd = new Date(new Date().setDate(new Date().getDate()-2)); 
-                    var firstd = new Date("01/01/2020"); 
-                    var days = (yestd.getTime() - firstd.getTime())/(1000 * 3600 * 24); 
-                    var yestd_str = yestd.toISOString().slice(0, 10);
-                    console.log(yestd_str);
-                    console.log(days);
-                    console.log(results);
+          }
 
-                    function filterData(yestd) {
-                        return results.data.filter(row => {
-                            return row.date == yestd;
-                        });
-                    }
-                    var newData = Object.assign([], filterData(yestd), popdata);
-                    console.log(newData);
+          const filtered = filterData(yestd_str);
+          const dataMap = {};
+          filtered.forEach(function (pop) {
+            dataMap[pop.fips] = pop;
+          });
 
-                    map.once('idle', () => {
-                        newData.forEach(row => {
-                            row.excess_deaths = i(deaths2018==0) ? 0 : Number.parseFloat(row.deaths/(row.deaths2018/365*days)*100).toPrecision(2);
+          const joined = popData.map(function (item, index) {
+            const dataItem = dataMap[item.fips];
+            const join = { ...dataItem, ...item };
+            processPopRow(join);
+            return join;
+          });
+          // processPopData(joined);
+        });
+      });
 
-                            map.setFeatureState({
-                                source: 'albersusa',
-                                sourceLayer: 'albersusa',
-                                id: row.fips
-                            },
-                                {
-                                    county: row.county,
-                                    state_name: row.state,
-                                    confirmed_deaths: row.deaths,
-                                    excess_deaths: row.excess_deaths,
-                                    confirmed_cases: row.cases
-                                });
-                        });
+      var popup = new mapboxgl.Popup({
+        closeButton: false,
+        closeOnClick: false,
+      });
 
+      map.on('mousemove', 'county-fill', function (e) {
+        map.getCanvas().style.cursor = 'pointer';
 
-                        map.addLayer({
-                            'id': 'county-fill',
-                            'type': 'fill',
-                            'source': 'albersusa',
-                            'source-layer': 'albersusa',
-                            'layout': {},
-                            'paint': {
-                                'fill-color': ['case',
-                                    ['!=', ['feature-state', 'confirmed_deaths'], null],
-                                    ['interpolate',
-                                        ['linear'],
-                                        ['to-number', ['feature-state', 'confirmed_deaths']],
-                                        0, '#999999',
-                                        1, '#FCE8DF',
-                                        146, '#FCE8DF',
-                                        146.1, '#FBBDA6',
-                                        620, '#FBBDA6',
-                                        620.1, "#FA8870",
-                                        1455, "#FA8870",
-                                        1455.1, "#E35B56",
-                                        3326, '#E35B56',
-                                        3326.1, "#B6474B",
-                                    ],
-                                    '#999999'
-                                ]
-                            },
-                            'filter': ['==', ['get', 'type'], 'county']
-                        });
-
-                        map.addLayer({
-                            'id': 'albersusa-county-line',
-                            'type': 'line',
-                            'source': 'albersusa',
-                            'source-layer': 'albersusa',
-                            'layout': {
-                                'line-join': 'round',
-                                'line-cap': 'round'
-                            },
-                            'paint': {
-                                'line-color': '#D8CAC1',
-                                'line-width': 1
-                            },
-                            'filter': ['==', ['get', 'type'], 'county']
-                        });
-
-                        map.addLayer({
-                            'id': 'albersusa-line',
-                            'type': 'line',
-                            'source': 'albersusa',
-                            'source-layer': 'albersusa',
-                            'layout': {
-                                'line-join': 'round',
-                                'line-cap': 'round'
-                            },
-                            'paint': {
-                                'line-color': '#994433',
-                                'line-width': .5
-                            },
-                            'filter': ['==', ['get', 'type'], 'state']
-                        });
-
-                    })
-                }
-            });
-
-            map.addSource('albersusa', {
-                type: 'vector',
-                url: 'mapbox://lobenichou.albersusa',
-                promoteId: 'county_fips'
-            });
-
+        var county = map.queryRenderedFeatures(e.point, {
+          layers: ['county-fill'],
         });
 
-        var popup = new mapboxgl.Popup({
-            closeButton: false,
-            closeOnClick: false
-        });
+        var props = county[0].properties;
 
-        map.on('mousemove', 'county-fill', function (e) {
+        var state = county[0].state;
 
-            map.getCanvas().style.cursor = 'pointer';
+        var content =
+          '<b>' + props.county_name + ', ' + props.state_name + '</b>' + '<br>';
+        content +=
+          'COVID-19 excess deaths: ' + state.excess_deaths + '%' + '<br>';
+        content +=
+          'Actual number of COVID-19 deaths: ' +
+          state.confirmed_deaths +
+          '<br>';
+        popup.setLngLat(e.lngLat).setHTML(content).addTo(map);
+      });
 
-            var county = map.queryRenderedFeatures(e.point, { layers: ['county-fill'] });
-
-            var props = county[0].properties;
-
-            var state = county[0].state;
-
-            var content = '<b>' + props.county_name + ', ' + props.state_name + '</b>' + '<br>';
-            content += 'COVID-19 excess deaths: ' + state.excess_deaths +'%'+ '<br>';
-            content += 'Actual number of COVID-19 deaths: ' + state.confirmed_deaths + '<br>';
-            popup.setLngLat(e.lngLat).setHTML(content).addTo(map);
-
-        });
-
-        map.on('mouseleave', 'county-fill', function () {
-            map.getCanvas().style.cursor = '';
-            popup.remove()
-
-
-        });
-
-
+      map.on('mouseleave', 'county-fill', function () {
+        map.getCanvas().style.cursor = '';
+        popup.remove();
+      });
     </script>
-
-</body>
-
+  </body>
 </html>
